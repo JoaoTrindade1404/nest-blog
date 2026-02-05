@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +12,7 @@ import { Repository } from 'typeorm';
 import { HashService } from 'src/common/security/hash.service';
 import { plainToInstance } from 'class-transformer';
 import { ResponseUserDto } from './dto/response-user.dto';
+import { UpdateUserDto } from './dto/update.user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,6 +21,26 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly hashService: HashService,
   ) {}
+
+  async failIfEmailExists(email: string) {
+    const exists = await this.userRepository.existsBy({
+      email,
+    });
+
+    if (exists) {
+      throw new ConflictException('Email ja está em uso');
+    }
+  }
+
+  async findOneByOrFail(userData: Partial<User>) {
+    const user = await this.userRepository.findOneBy(userData);
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return user;
+  }
 
   async create(userDTO: CreateUserDto): Promise<ResponseUserDto> {
     const { password } = userDTO;
@@ -73,5 +96,27 @@ export class UserService {
 
   async save(user: User) {
     return await this.userRepository.save(user);
+  }
+
+  async update(id: string, userDto: UpdateUserDto) {
+    if (!userDto.name && !userDto.email) {
+      throw new BadRequestException('Dados não enviados');
+    }
+
+    const user = await this.findOneByOrFail({ id });
+
+    user.name = userDto.name ?? user.name;
+
+    if (userDto.email && userDto.email !== user.email) {
+      await this.failIfEmailExists(userDto.email);
+      user.email = userDto.email;
+      user.forceLogout = true;
+    }
+
+    const savedUser = this.save(user);
+
+    return plainToInstance(ResponseUserDto, savedUser, {
+      excludeExtraneousValues: true,
+    });
   }
 }

@@ -12,11 +12,5 @@ export class ResponseUserDto {
   email: string;
 
   @Expose()
-  createdAt: Date;
-
-  @Expose()
   updatedAt: Date;
-
-  @Expose()
-  forceLogout: boolean;
 }
