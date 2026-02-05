@@ -54,4 +54,24 @@ export class UserService {
       typeof (error as { code: unknown }).code === 'string'
     );
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ email });
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id });
+  }
+
+  async findByEmailWithPassword(email: string): Promise<User | null> {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .addSelect('user.password')
+      .getOne();
+  }
+
+  async save(user: User) {
+    return await this.userRepository.save(user);
+  }
 }

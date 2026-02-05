@@ -10,4 +10,13 @@ export class ResponseUserDto {
 
   @Expose()
   email: string;
+
+  @Expose()
+  createdAt: Date;
+
+  @Expose()
+  updatedAt: Date;
+
+  @Expose()
+  forceLogout: boolean;
 }
