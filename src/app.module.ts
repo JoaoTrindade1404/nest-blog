@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PostModule } from './posts/post.module';
 
 @Module({
   imports: [
@@ -16,18 +17,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_PORT,
+      host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT ?? '5432'),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
+      username: process.env.DB_USER || 'admin',
+      password: process.env.DB_PASS || 'admin',
+      database: process.env.DB_NAME || 'blog_database',
 
       autoLoadEntities: true,
 
-      synchronize: false,
+      synchronize: true,
 
-      migrationsRun: true,
+      migrationsRun: false,
     }),
+
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
