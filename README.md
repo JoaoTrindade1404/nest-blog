@@ -386,21 +386,6 @@ Os dados são persistidos no diretório `./pgdata`.
 - Excerpt é obrigatório
 - Autor é vinculado automaticamente
 
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Por favor:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença UNLICENSED - veja o arquivo [LICENSE](LICENSE)
-para detalhes.
-
 ## 👤 Autor
 
 **João Vitor** - [GitHub](https://github.com/JoaoTrindade1404)
