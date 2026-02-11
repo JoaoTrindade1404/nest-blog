@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create.user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +14,7 @@ import { HashService } from 'src/common/security/hash.service';
 import { plainToInstance } from 'class-transformer';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
+import { UpdatePasswordDto } from './dto/update-password.user.dto';
 
 @Injectable()
 export class UserService {
@@ -116,6 +118,60 @@ export class UserService {
     const savedUser = this.save(user);
 
     return plainToInstance(ResponseUserDto, savedUser, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async updatePassword(id: string, passwordDto: UpdatePasswordDto) {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .addSelect('user.password')
+      .getOne();
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const { currentPassword, newPassword } = passwordDto;
+
+    const isPasswordValid = await this.hashService.compare(
+      currentPassword,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Senha incorreta');
+    }
+
+    const isSamePassword = await this.hashService.compare(
+      newPassword,
+      user.password,
+    );
+
+    if (isSamePassword) {
+      throw new BadRequestException(
+        'Nova senha precisa ser diferente da atual',
+      );
+    }
+
+    const hashedPassword = await this.hashService.hash(newPassword);
+    user.password = hashedPassword;
+    user.forceLogout = true;
+
+    const savedUser = await this.save(user);
+
+    return plainToInstance(ResponseUserDto, savedUser, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async remove(id: string) {
+    const user = await this.findOneByOrFail({ id });
+
+    const deletedUser = this.userRepository.remove(user);
+
+    return plainToInstance(ResponseUserDto, deletedUser, {
       excludeExtraneousValues: true,
     });
   }
