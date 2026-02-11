@@ -403,8 +403,6 @@ para detalhes.
 
 ## 👤 Autor
 
-**Diego** - [GitHub](https://github.com/JoaoTrindade1404)
+**João Vitor** - [GitHub](https://github.com/JoaoTrindade1404)
 
 ---
-
-⭐ Se este projeto te ajudou, considere dar uma estrela!
