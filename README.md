@@ -1,8 +1,34 @@
 # 📝 Blog API - NestJS
 
+> [!WARNING] **PROJETO EM DESENVOLVIMENTO** - Este projeto não está 100%
+> concluído e está em fase de desenvolvimento ativo. Algumas funcionalidades
+> podem estar incompletas ou em progresso.
+
 Uma API RESTful robusta para gerenciamento de blog, construída com NestJS,
 TypeORM e PostgreSQL. O projeto implementa autenticação JWT, gerenciamento de
 usuários e sistema completo de posts.
+
+## 🚦 Status Atual do Desenvolvimento
+
+### ✅ O que está funcionando
+
+- **Autenticação completa** - Sistema JWT com cookies HTTP-only, login e
+  validações
+- **Gestão de Usuários** - CRUD completo (criar, atualizar perfil, mudar senha,
+  deletar)
+- **Criação de Posts** - Usuários autenticados podem criar posts com todas as
+  propriedades
+
+### 🚧 Onde o projeto parou
+
+- **CRUD de Posts incompleto** - Apenas CREATE está implementado
+  - ❌ Falta: Listar posts (todos, por autor, por ID)
+  - ❌ Falta: Atualizar posts
+  - ❌ Falta: Deletar posts
+  - ❌ Falta: Filtros e paginação
+- **Sem testes** - Nenhum teste unitário ou E2E implementado ainda
+- **Sem migrations** - Banco de dados criado manualmente via TypeORM sync
+- **Features avançadas pendentes** - Comentários, tags, upload de imagens, etc.
 
 ## 🚀 Tecnologias
 
@@ -354,20 +380,35 @@ Os dados são persistidos no diretório `./pgdata`.
 - Adicione helmet para headers de segurança
 - Configure logs adequados
 
-## 🚧 Status do Projeto
+## 🎯 Próximos Passos
 
-**Em desenvolvimento ativo**
+Para completar o MVP do projeto, as próximas implementações seriam:
 
-### Próximas Funcionalidades
+### Prioridade Alta
 
-- [ ] CRUD completo de posts (GET, UPDATE, DELETE)
+- [ ] **Completar CRUD de Posts**
+  - [ ] GET `/posts` - Listar todos os posts publicados
+  - [ ] GET `/posts/:id` - Buscar post por ID
+  - [ ] GET `/posts/user/:userId` - Posts de um autor específico
+  - [ ] PATCH `/posts/:id` - Atualizar post (apenas autor)
+  - [ ] DELETE `/posts/:id` - Deletar post (apenas autor)
+- [ ] **Paginação e Filtros** - Para listagem de posts
+- [ ] **Testes E2E** - Cobertura básica dos principais fluxos
+
+### Prioridade Média
+
 - [ ] Sistema de categorias/tags
-- [ ] Paginação e filtros
-- [ ] Upload de imagens
-- [ ] Sistema de comentários
+- [ ] Upload de imagens (coverImage)
 - [ ] Refresh tokens
+- [ ] Rate limiting
+- [ ] Migrations organizadas
+
+### Features Futuras
+
+- [ ] Sistema de comentários
 - [ ] Roles e permissões (admin, editor, author)
-- [ ] Testes automatizados
+- [ ] Busca full-text
+- [ ] Rascunhos e agendamento de posts
 
 ## 📝 Validações Implementadas
 
@@ -385,9 +426,3 @@ Os dados são persistidos no diretório `./pgdata`.
 - Content é obrigatório
 - Excerpt é obrigatório
 - Autor é vinculado automaticamente
-
-## 👤 Autor
-
-**João Vitor** - [GitHub](https://github.com/JoaoTrindade1404)
-
----
