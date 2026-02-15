@@ -23,6 +23,9 @@ export class PostResponseDto {
   author: ResponseUserDto;
 
   @Expose()
+  coverImageUrl: string;
+
+  @Expose()
   createdAt?: Date;
 
   @Expose()
