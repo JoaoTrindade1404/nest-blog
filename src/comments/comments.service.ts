@@ -21,8 +21,6 @@ export class CommentsService {
     private readonly postService: PostService,
   ) {}
 
-  // ── Auxiliar interno ──────────────────────────────────────────────────────
-
   private async getOwnedComment(id: string, author: User): Promise<Comment> {
     const comment = await this.commentRepository.findOne({
       where: { id },
@@ -42,8 +40,6 @@ export class CommentsService {
     return comment;
   }
 
-  // ── Criar ─────────────────────────────────────────────────────────────────
-
   async create(user: User, postId: string, dto: CreateCommentDto) {
     const post = await this.postService.findOneOrFail({ id: postId });
 
@@ -59,8 +55,6 @@ export class CommentsService {
       excludeExtraneousValues: true,
     });
   }
-
-  // ── Listar todos de um post (público) ────────────────────────────────────
 
   async findAllByPost(postId: string, page: number, limit: number) {
     await this.postService.findOneOrFail({ id: postId });
@@ -87,8 +81,6 @@ export class CommentsService {
     };
   }
 
-  // ── Listar meus comentários ───────────────────────────────────────────────
-
   async findAllOwned(author: User, page: number, limit: number) {
     const [comments, total] = await this.commentRepository.findAndCount({
       where: { author: { id: author.id } },
@@ -112,8 +104,6 @@ export class CommentsService {
     };
   }
 
-  // ── Buscar um por ID ──────────────────────────────────────────────────────
-
   async findOne(id: string) {
     const comment = await this.commentRepository.findOne({
       where: { id },
@@ -129,8 +119,6 @@ export class CommentsService {
     });
   }
 
-  // ── Atualizar (apenas dono) ───────────────────────────────────────────────
-
   async update(id: string, dto: UpdateCommentDto, author: User) {
     const comment = await this.getOwnedComment(id, author);
 
@@ -142,8 +130,6 @@ export class CommentsService {
       excludeExtraneousValues: true,
     });
   }
-
-  // ── Deletar (apenas dono) ─────────────────────────────────────────────────
 
   async remove(id: string, author: User) {
     await this.getOwnedComment(id, author);
