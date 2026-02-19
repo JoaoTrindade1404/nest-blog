@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModule } from './posts/post.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -25,12 +26,16 @@ import { PostModule } from './posts/post.module';
 
       autoLoadEntities: true,
 
-      synchronize: true,
+      synchronize: false,
 
-      migrationsRun: false,
+      migrations: ['dist/db/migrations/*.js'],
+
+      migrationsRun: true,
     }),
 
     PostModule,
+
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

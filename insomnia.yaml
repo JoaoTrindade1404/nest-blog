@@ -1,0 +1,278 @@
+_type: export
+__export_format: 4
+__export_date: 2026-02-19T00:00:00.000Z
+__export_source: insomnia.desktop.app
+resources:
+  # ── Workspace ──────────────────────────────
+  - _id: wrk_blog
+    _type: workspace
+    name: Blog NestJS API
+    description: ''
+    parentId: null
+    scope: collection
+
+  # ── Environment ────────────────────────────
+  - _id: env_blog
+    _type: environment
+    name: Base Environment
+    data:
+      base_url: http://localhost:3000
+      token: ''
+    parentId: wrk_blog
+    isPrivate: false
+
+  # ── AUTH ───────────────────────────────────
+  - _id: fld_auth
+    _type: request_group
+    name: '🔐 Auth'
+    parentId: wrk_blog
+
+  - _id: req_login
+    _type: request
+    name: Login
+    method: POST
+    url: '{{ _.base_url }}/auth/login'
+    body:
+      mimeType: application/json
+      text:
+        "{\n  \"email\": \"usuario@email.com\",\n  \"password\": \"senha123\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+    parentId: fld_auth
+
+  # ── USER ───────────────────────────────────
+  - _id: fld_user
+    _type: request_group
+    name: '👤 User'
+    parentId: wrk_blog
+
+  - _id: req_user_create
+    _type: request
+    name: Criar Usuário
+    method: POST
+    url: '{{ _.base_url }}/user/create'
+    body:
+      mimeType: application/json
+      text:
+        "{\n  \"name\": \"Diego Trindade\",\n  \"email\":
+        \"diego@email.com\",\n  \"password\": \"senha123\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+    parentId: fld_user
+
+  - _id: req_user_find_by_email
+    _type: request
+    name: Buscar Usuário por Email
+    method: GET
+    url: '{{ _.base_url }}/user?email=diego@email.com'
+    parentId: fld_user
+
+  - _id: req_user_update
+    _type: request
+    name: Atualizar Usuário (Protegido)
+    method: PATCH
+    url: '{{ _.base_url }}/user/me'
+    body:
+      mimeType: application/json
+      text:
+        "{\n  \"name\": \"Diego Novo Nome\",\n  \"email\":
+        \"novoemail@email.com\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_user
+
+  - _id: req_user_update_password
+    _type: request
+    name: Atualizar Senha (Protegido)
+    method: PATCH
+    url: '{{ _.base_url }}/user/password'
+    body:
+      mimeType: application/json
+      text:
+        "{\n  \"currentPassword\": \"senha123\",\n  \"newPassword\":
+        \"novaSenha456\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_user
+
+  - _id: req_user_delete
+    _type: request
+    name: Deletar Usuário (Protegido)
+    method: DELETE
+    url: '{{ _.base_url }}/user/me'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_user
+
+  # ── POSTS PÚBLICO ──────────────────────────
+  - _id: fld_posts_public
+    _type: request_group
+    name: '📝 Posts (Público)'
+    parentId: wrk_blog
+
+  - _id: req_posts_list_published
+    _type: request
+    name: Listar Posts Publicados
+    method: GET
+    url: '{{ _.base_url }}/post'
+    parentId: fld_posts_public
+
+  - _id: req_posts_find_by_slug
+    _type: request
+    name: Buscar Post por Slug
+    method: GET
+    url: '{{ _.base_url }}/post/meu-post-exemplo'
+    parentId: fld_posts_public
+
+  # ── POSTS PROTEGIDO ────────────────────────
+  - _id: fld_posts_private
+    _type: request_group
+    name: '🔒 Posts (Protegido)'
+    parentId: wrk_blog
+
+  - _id: req_post_create
+    _type: request
+    name: Criar Post
+    method: POST
+    url: '{{ _.base_url }}/post/me'
+    body:
+      mimeType: application/json
+      text:
+        "{\n  \"title\": \"Meu primeiro post no NestJS\",\n  \"excerpt\": \"Um
+        resumo bem interessante do que vem por aí\",\n  \"content\": \"Conteúdo
+        completo do post aqui...\",\n  \"coverImageUrl\":
+        \"https://exemplo.com/imagem.jpg\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_posts_private
+
+  - _id: req_post_find_all_mine
+    _type: request
+    name: Listar Meus Posts
+    method: GET
+    url: '{{ _.base_url }}/post/me'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_posts_private
+
+  - _id: req_post_find_one_mine
+    _type: request
+    name: Buscar Meu Post por ID
+    method: GET
+    url: '{{ _.base_url }}/post/me/POST_UUID_AQUI'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_posts_private
+
+  - _id: req_post_update
+    _type: request
+    name: Atualizar Post
+    method: PATCH
+    url: '{{ _.base_url }}/post/me/POST_UUID_AQUI'
+    body:
+      mimeType: application/json
+      text:
+        "{\n  \"title\": \"Título atualizado\",\n  \"excerpt\": \"Novo resumo do
+        post aqui\",\n  \"content\": \"Conteúdo
+        atualizado...\",\n  \"coverImageUrl\":
+        \"https://exemplo.com/nova-imagem.jpg\",\n  \"published\": true\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_posts_private
+
+  - _id: req_post_delete
+    _type: request
+    name: Deletar Post
+    method: DELETE
+    url: '{{ _.base_url }}/post/me/POST_UUID_AQUI'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_posts_private
+
+  # ── COMMENTS ───────────────────────────────
+  - _id: fld_comments
+    _type: request_group
+    name: '💬 Comments'
+    parentId: wrk_blog
+
+  - _id: req_comment_create
+    _type: request
+    name: Criar Comentário em Post (Protegido)
+    method: POST
+    url: '{{ _.base_url }}/comments/POST_UUID_AQUI'
+    body:
+      mimeType: application/json
+      text: "{\n  \"content\": \"Que post incrível!\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_comments
+
+  - _id: req_comment_list_by_post
+    _type: request
+    name: Listar Comentários do Post (Público)
+    method: GET
+    url: '{{ _.base_url }}/comments/post/POST_UUID_AQUI?page=1&limit=10'
+    parentId: fld_comments
+
+  - _id: req_comment_list_mine
+    _type: request
+    name: Meus Comentários (Protegido)
+    method: GET
+    url: '{{ _.base_url }}/comments/me?page=1&limit=10'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_comments
+
+  - _id: req_comment_find_one
+    _type: request
+    name: Buscar Comentário por ID (Público)
+    method: GET
+    url: '{{ _.base_url }}/comments/COMMENT_UUID_AQUI'
+    parentId: fld_comments
+
+  - _id: req_comment_update
+    _type: request
+    name: Atualizar Comentário (Protegido)
+    method: PATCH
+    url: '{{ _.base_url }}/comments/COMMENT_UUID_AQUI'
+    body:
+      mimeType: application/json
+      text: "{\n  \"content\": \"Comentário editado\"\n}"
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_comments
+
+  - _id: req_comment_delete
+    _type: request
+    name: Deletar Comentário (Protegido)
+    method: DELETE
+    url: '{{ _.base_url }}/comments/COMMENT_UUID_AQUI'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.token }}'
+    parentId: fld_comments

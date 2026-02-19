@@ -127,4 +127,59 @@ export class PostService {
       excludeExtraneousValues: true,
     });
   }
+
+  async remove(postData: Partial<Post>, author: User) {
+    const post = await this.findOneOrFail(postData);
+
+    const deletedPost = await this.postRepository.delete({
+      ...postData,
+      author: { id: author.id },
+    });
+
+    return plainToInstance(PostResponseDto, deletedPost, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async findOnePublished(postData: Partial<Post>) {
+    const post = await this.findOneOrFail(postData);
+
+    return plainToInstance(PostResponseDto, post, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async findAll(postData: Partial<Post>) {
+    const posts = await this.postRepository.find({
+      where: postData,
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: ['author'],
+    });
+
+    return plainToInstance(PostResponseDto, posts, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async findAllPaginated(page: number, limit: number) {
+    const [posts, total] = await this.postRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+      relations: ['author'],
+    });
+
+    return {
+      data: posts,
+      meta: {
+        totalItems: total,
+        itemCount: posts.length,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+      },
+    };
+  }
 }

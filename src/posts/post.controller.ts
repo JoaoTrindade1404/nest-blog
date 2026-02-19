@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -51,5 +53,27 @@ export class PostController {
     @Body() updatedPost: UpdatePostDto,
   ) {
     return this.postService.updatePost({ id }, updatedPost, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('me/:id')
+  async delete(
+    @Req() req: AuthenticatedRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.postService.remove({ id }, req.user);
+  }
+
+  @Get(':slug')
+  async findOnePublished(@Param('slug') slug: string) {
+    return this.postService.findOnePublished({
+      slug,
+      published: true,
+    });
+  }
+
+  @Get()
+  async findAllPublished(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.postService.findAllPaginated(Number(page), Number(limit));
   }
 }
