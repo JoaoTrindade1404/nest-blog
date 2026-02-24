@@ -28,6 +28,10 @@ import { CommentsModule } from './comments/comments.module';
 
       synchronize: false,
 
+      ssl: process.env.DB_HOST?.includes('neon.tech')
+        ? { rejectUnauthorized: false }
+        : false,
+
       migrations: ['dist/db/migrations/*.js'],
 
       migrationsRun: true,
